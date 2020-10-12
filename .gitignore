@@ -5,3 +5,6 @@ project/target
 target
 .vscode
 .metals
+.bloop
+project/.bloop
+project/project

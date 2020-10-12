@@ -1,8 +1,18 @@
+
+organization := "com.quasigroup.inc"
+
 name := "zio-akka"
 
 version := "0.1"
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.2"
+//
+//resolvers ++= Seq(
+//  Resolver.sonatypeRepo("releases"),
+//  Resolver.sonatypeRepo("snapshots")
+//)
+
+
 libraryDependencies ++= webStack ++ stackGlue
 
 lazy val webStack = akka ++ http ++ circe
