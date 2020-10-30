@@ -17,9 +17,9 @@ package object http {
   def live[T : Tag](bindingOn: BindOn, withRoutes: RequestContext => Future[RouteResult]): ZLayer[TypedAkka[T], Throwable, Binding] =
     ZLayer.fromServiceM { system =>
       implicit val sys: ActorSystem[T] = system
-      Task.fromFuture { ec =>
+      Task.fromFuture {
         Http().newServerAt(bindingOn.host, bindingOn.port)
-          .bind(withRoutes).map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))(ec)
+          .bind(withRoutes).map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))(_)
       }
     }
 

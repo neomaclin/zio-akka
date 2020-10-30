@@ -11,7 +11,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
 package object http {
-
   type Binding = Has[ServerBinding]
 
   def live(

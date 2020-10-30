@@ -6,12 +6,6 @@ name := "zio-akka"
 version := "0.1"
 
 scalaVersion := "2.13.2"
-//
-//resolvers ++= Seq(
-//  Resolver.sonatypeRepo("releases"),
-//  Resolver.sonatypeRepo("snapshots")
-//)
-
 
 libraryDependencies ++= webStack ++ stackGlue
 
@@ -30,11 +24,7 @@ lazy val cats = {
 lazy val zio = {
   val version = "1.0.1"
   Seq(
-    "dev.zio" %% "zio" % version,
-    "dev.zio" %% "zio-logging" % "0.4.0",
-    "dev.zio" %% "zio-logging-slf4j" % "0.4.0",
-    "dev.zio" %% "zio-interop-cats" % "2.1.4.0",
-    //"dev.zio" %% "zio-config" % "1.0.0"
+    "dev.zio" %% "zio" % version
   )
 }
 

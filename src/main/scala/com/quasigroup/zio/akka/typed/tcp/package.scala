@@ -7,6 +7,7 @@ import com.quasigroup.zio.akka.models.BindOn
 import zio._
 
 package object tcp {
+
   type Binding = Has[ServerBinding]
 
   def live[T: Tag](
