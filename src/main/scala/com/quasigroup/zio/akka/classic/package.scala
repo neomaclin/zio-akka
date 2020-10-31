@@ -1,9 +1,10 @@
 package com.quasigroup.zio.akka
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem, Cancellable, Props}
+import akka.http.scaladsl.server.{RequestContext, RouteResult}
 import zio._
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration.FiniteDuration
 
 package object classic {
@@ -25,10 +26,13 @@ package object classic {
   }
 
   def live(name: String): ZLayer[Any, Throwable, ClassicAkka] = {
+      start(name).toLayer
+  }
+
+  def start(name: String): ZManaged[Any, Throwable, ActorSystem] = {
     Task
       .effect(ActorSystem(name))
       .toManaged(sys => Task.fromFuture(_ => sys.terminate()).either)
-      .toLayer
   }
 
   val service: ZLayer[ClassicAkka, Throwable, ClassicAkkaService] =

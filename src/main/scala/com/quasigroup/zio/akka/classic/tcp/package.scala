@@ -14,15 +14,15 @@ package object tcp {
   def live(
       bindingOn: BindOn,
       handler: Flow[ByteString, ByteString, _]
-  ): ZLayer[ClassicAkka, Throwable, Binding] =
-    ZLayer.fromServiceManaged { system =>
-      implicit val sys: ActorSystem = system
-      Task
-        .fromFuture(_ =>
-          Tcp().bindAndHandle(handler, bindingOn.host, bindingOn.port)
-        )
-        .toManaged(binding => Task.fromFuture(_ => binding.unbind()).either)
-    }
+  ): ZLayer[ClassicAkka, Throwable, Binding] =  ZLayer.fromServiceManaged(start(bindingOn,handler).provide)
 
+  def start(bindingOn: BindOn,  handler: Flow[ByteString, ByteString, _]): ZManaged[ActorSystem, Throwable, ServerBinding] =
+    (for {
+      system <- ZIO.environment[ActorSystem]
+      server <- Task.fromFuture { _ =>
+          implicit val sys: ActorSystem = system
+          Tcp().bindAndHandle(handler, bindingOn.host, bindingOn.port)
+        }
+    }yield server).toManaged(binding => Task.fromFuture(_ => binding.unbind()).either)
 
 }

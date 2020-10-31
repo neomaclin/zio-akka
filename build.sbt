@@ -18,13 +18,14 @@ lazy val cats = {
     "org.typelevel" %% "cats-effect",
     "org.typelevel" %% "cats-core",
     "org.typelevel" %% "cats-free"
-  ).map(_ % "2.1.0")
+  ).map(_ % "2.2.0")
 }
 
 lazy val zio = {
   val version = "1.0.1"
   Seq(
-    "dev.zio" %% "zio" % version
+    "dev.zio" %% "zio" % version,
+    "dev.zio" %% "zio-interop-cats" % "2.2.0.1"
   )
 }
 
