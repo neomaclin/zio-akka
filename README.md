@@ -28,4 +28,19 @@
 
 ```
 
-Note: ```Entrance.indexHtml``` is a ```tapir``` endpoint from my other project : https://github.com/neomaclin/endpoints  
+Note: ```Entrance.indexHtml``` is a ```tapir``` endpoint from my other project: https://github.com/neomaclin/endpoints, or just for a quick demo to get some taste of what zio and akka do. 
+
+```Scala
+
+import com.quasigroup.zio.akka.classic
+import com.quasigroup.zio.akka.classic.http._
+import zio._
+import zio.console._
+
+object Main extends App {
+
+ def run(args: List[String]) =
+     (ZIO.environment[Binding] *> getStrLn).provideLayer(Console.live ++ classic.http.demo).exitCode
+
+}
+```

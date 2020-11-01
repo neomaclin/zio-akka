@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Route
+import com.quasigroup.zio.akka.classic
 import com.quasigroup.zio.akka.models._
 import zio._
 
@@ -29,7 +30,16 @@ package object http {
             )(_)
         }
       }yield server).toManaged_
+  import akka.http.scaladsl.server.Directives._
 
+  val route: Route = get {
+    pathSingleSlash {
+      complete {
+        "It works!"
+      }
+    }
+  }
+  val demo: ZLayer[Any, Throwable, Binding] = classic.demo >>> live(BindOn("127.0.0.1",8080), ec => route)
 
   def live(
       bindingOn: BindOn,

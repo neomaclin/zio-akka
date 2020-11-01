@@ -25,6 +25,7 @@ package object classic {
     ): Task[Unit]
   }
 
+  val demo = live("demo")
   def live(name: String): ZLayer[Any, Throwable, ClassicAkka] = {
       start(name).toLayer
   }
