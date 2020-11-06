@@ -28,7 +28,9 @@
 
 ```
 
-Note: ```Entrance.indexHtml``` is a ```tapir``` endpoint from my other project: https://github.com/neomaclin/endpoints, or just for a quick demo to get some taste of what zio and akka do. 
+Note: ```Entrance.indexHtml``` is a ```tapir``` endpoint from my other project: https://github.com/neomaclin/endpoints.
+ 
+Or, if that was too much to get started, just for a quick demo to get a taste of what zio and akka do. 
 
 ```Scala
 

@@ -18,15 +18,12 @@ package object http {
   def start[T : Tag](bindingOn: BindOn, withRoutes: ToRoute): ZManaged[ActorSystem[T], Throwable, ServerBinding] =
     (for {
       system <- ZIO.environment[ActorSystem[T]]
-      ec <- ZIO.access[ActorSystem[T]](_.executionContext)
       server <- Task.fromFuture {
         implicit val sys: ActorSystem[T] = system
         Http()
           .newServerAt(bindingOn.host, bindingOn.port)
-          .bind(withRoutes(ec))
-          .map(
-            _.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds)
-          )(_)
+          .bind(withRoutes(sys.executionContext))
+          .map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))(_)
       }
     }yield server).toManaged_
 
