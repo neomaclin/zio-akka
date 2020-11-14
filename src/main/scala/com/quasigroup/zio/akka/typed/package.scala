@@ -15,4 +15,5 @@ package object typed {
       .effect(ActorSystem(guardianBehavior, name))
       .toManaged(sys => UIO(sys.terminate()))
   }
+
 }

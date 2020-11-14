@@ -1,10 +1,14 @@
 package com.quasigroup.zio.akka
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem, Cancellable, Props}
+import akka.stream.scaladsl.RunnableGraph
+import akka.util.Timeout
 import zio._
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{DurationDouble, FiniteDuration}
+import scala.reflect.ClassTag
+
 
 package object classic {
 
@@ -17,14 +21,16 @@ package object classic {
     def select(path: String): Task[ActorSelection]
     def stop(actor: ActorRef): Task[Unit]
     def scheduleOnce(delay: FiniteDuration, f: => Unit): Task[Cancellable]
-    def scheduleOnce(
+    def scheduleOnce[T](
         delay: FiniteDuration,
         receiver: ActorRef,
-        message: Any
+        message: T
     ): Task[Unit]
+    def ask[C, R: Tag : ClassTag](receiver: ActorRef, message: C): Task[R]
+    def execute[M](graph: RunnableGraph[M]): Task[M]
   }
 
-  val demo = live("demo")
+  val demo: ZLayer[Any, Throwable, ClassicAkka] = live("demo")
 
   def live(name: String): ZLayer[Any, Throwable, ClassicAkka] = {
     start(name).toLayer
@@ -36,9 +42,10 @@ package object classic {
       .toManaged(sys => Task.fromFuture(_ => sys.terminate()).either)
   }
 
-  def createService(system: ActorSystem): Task[Service] = Task.effect {
+  private def createService(system: ActorSystem): Task[Service] = Task.effect {
     implicit val sys: ActorSystem = system
     implicit val ec: ExecutionContextExecutor = system.dispatcher
+
     new classic.Service {
       def register(props: Props, name: String): Task[ActorRef] =
         Task { system.actorOf(props, name) }
@@ -50,12 +57,20 @@ package object classic {
         Task { system.stop(actor) }
       def scheduleOnce(delay: FiniteDuration, f: => Unit): Task[Cancellable] =
         Task { system.scheduler.scheduleOnce(delay)(f) }
-      def scheduleOnce(
+      def scheduleOnce[T](
           delay: FiniteDuration,
           receiver: ActorRef,
-          message: Any
+          message: T
       ): Task[Unit] =
         Task { system.scheduler.scheduleOnce(delay, receiver, message) }
+      def execute[M](graph: RunnableGraph[M]): Task[M] = {
+        Task { graph.run() }
+      }
+      import akka.pattern
+      def ask[C, R: Tag : ClassTag](receiver: ActorRef, message: C): Task[R] = {
+        implicit val timeout: Timeout = 0.5.second
+        Task.fromFuture[R]{ _ => pattern.ask(receiver, message).mapTo[R] }
+      }
     }
   }
 
@@ -89,4 +104,10 @@ package object classic {
       message: Any
   ): RIO[ClassicAkkaService, Unit] =
     ZIO.accessM(_.get.scheduleOnce(delay, receiver, message))
+
+  def execute[M](graph: RunnableGraph[M]): RIO[ClassicAkkaService, M] =
+    ZIO.accessM(_.get.execute(graph))
+
+  def ask[C, R: Tag : ClassTag](receiver: ActorRef, message: C): RIO[ClassicAkkaService,R] =
+    ZIO.accessM(_.get.ask(receiver, message))
 }

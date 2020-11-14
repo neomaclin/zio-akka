@@ -28,15 +28,18 @@ package object http {
     } yield server).toManaged_
   import akka.http.scaladsl.server.Directives._
 
-  val route: Route = get {
-    pathSingleSlash {
-      complete {
-        "It works!"
-      }
-    }
-  }
   val demo: ZLayer[Any, Throwable, Binding] =
-    classic.demo >>> live(BindOn("127.0.0.1", 8080), ec => route)
+    classic.demo >>> live(
+      BindOn("127.0.0.1", 8080),
+      _ =>
+        get {
+          pathSingleSlash {
+            complete {
+              "It works!"
+            }
+          }
+        }
+    )
 
   def live(bindingOn: BindOn, withRoutes: ToRoute): ZLayer[ClassicAkka, Throwable, Binding] =
     ZLayer.fromServiceManaged(start(bindingOn, withRoutes).provide)
