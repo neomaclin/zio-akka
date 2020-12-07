@@ -25,10 +25,17 @@ lazy val akka = {
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream-typed"  % akkaVersion,
+    "com.typesafe.akka" %% "akka-cluster"  % akkaVersion,
+    "com.typesafe.akka" %% "akka-cluster-typed"  % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster-sharding" % akkaVersion,
+    "com.typesafe.akka" %% "akka-cluster-sharding-typed" % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
     "com.typesafe.akka" %% "akka-persistence" % akkaVersion excludeAll (ExclusionRule(
+      "io.netty"
+    )),
+    "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion excludeAll (ExclusionRule(
       "io.netty"
     )),
     "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
