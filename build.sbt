@@ -3,7 +3,7 @@ organization := "com.quasigroup.inc"
 
 name := "zio-akka"
 
-version := "0.1"
+version := "0.8"
 
 scalaVersion := "2.13.4"
 
@@ -14,8 +14,10 @@ lazy val zio = {
   Seq(
     "dev.zio" %% "zio" % version,
     "dev.zio" %% "zio-interop-cats" % "2.2.0.1",
-    "dev.zio" %% "zio-logging" % "0.4.0",
-    "dev.zio" %% "zio-logging-slf4j" % "0.4.0",
+    "dev.zio" %% "zio-logging" % "0.5.4",
+    "dev.zio" %% "zio-logging-slf4j" % "0.5.4",
+    "dev.zio" %% "zio-test"          % version % Test,
+    "dev.zio" %% "zio-test-sbt"      % version % Test,
   )
 }
 
@@ -32,12 +34,8 @@ lazy val akka = {
     "com.typesafe.akka" %% "akka-cluster-sharding-typed" % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
-    "com.typesafe.akka" %% "akka-persistence" % akkaVersion excludeAll (ExclusionRule(
-      "io.netty"
-    )),
-    "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion excludeAll (ExclusionRule(
-      "io.netty"
-    )),
+    "com.typesafe.akka" %% "akka-persistence" % akkaVersion excludeAll ExclusionRule("io.netty"),
+    "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion excludeAll ExclusionRule("io.netty"),
     "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
     "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion,
     "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
@@ -47,11 +45,11 @@ lazy val akka = {
 }
 
 lazy val http = {
-  val akkaHttpVersion = "10.2.0"
+  val akkaHttpVersion = "10.2.2"
   Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
-    "de.heikoseeberger" %% "akka-http-circe" % "1.28.0",
-    "ch.megard" %% "akka-http-cors" % "0.4.3",
+    "de.heikoseeberger" %% "akka-http-circe" % "1.35.2",
+    "ch.megard" %% "akka-http-cors" % "1.1.0"
   )
 }

@@ -22,7 +22,7 @@ package object http {
         implicit val sys: ActorSystem = system
         Http()
           .newServerAt(bindingOn.host, bindingOn.port)
-          .bind(withRoutes(sys.dispatcher))
+          .bindFlow(withRoutes(sys.dispatcher))
           .map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))(_)
       }
     } yield server).toManaged_
